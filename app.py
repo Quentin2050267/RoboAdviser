@@ -1,13 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import os
 
-# 初始化 Flask 应用
-app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 
-# 路由和视图函数
-@app.route('/')
+# 初始化 Flask 应用
+# app = Flask(__name__, static_folder='frontend/build', static_url_path='')
+app = Flask(__name__, static_folder="static")
+
+# # 路由和视图函数
+# @app.route('/')
+# def index():
+#     return app.send_static_file('index.html')
+@app.route("/")
 def index():
-    return app.send_static_file('index.html')
+    return send_from_directory("static", "index.html")
+@app.route("/<path:path>")
+def catch_all(path):
+    return send_from_directory("static", "index.html")
+
 
 @app.route('/about')
 def about():

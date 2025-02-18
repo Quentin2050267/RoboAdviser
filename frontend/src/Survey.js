@@ -19,6 +19,12 @@ const Question = styled.h2`
   margin-bottom: 20px;
 `;
 
+const QuestionNumber = styled.div`
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #666;
+`;
+
 const Options = styled.div`
   display: flex;
   flex-direction: column;
@@ -113,6 +119,9 @@ function Survey() {
       <h1>问卷调查</h1>
       {currentQuestion < questions.length ? (
         <div>
+          <QuestionNumber>
+            问题 {currentQuestion + 1} / {questions.length}
+          </QuestionNumber>
           <Question>{questions[currentQuestion].question}</Question>
           <Options>
             {questions[currentQuestion].options.map((option, index) => (
