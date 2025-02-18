@@ -1,0 +1,103 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-weight: 400;
+}
+
+.nav-list {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.nav-list li {
+    margin-bottom: 10px;
+}
+
+.nav-list li a {
+    text-decoration: none;
+    color: #bdc3c7;
+    padding: 6px 12px;
+    display: block;
+    border-radius: 4px;
+}
+
+.nav-list li.completed a {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.header {
+    background: #2980b9;
+    color: white;
+    padding: 16px;
+    text-align: center;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #ecf0f1;
+    width: 100%;
+}
+
+.progress {
+    height: 6px;
+    background: #27ae60;
+    width: 0%;
+}
+
+.content {
+    padding: 20px;
+}
+
+.btn {
+    background: #3498db;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+}
+
+.submit-button {
+    background: #27ae60;
+}
+
+.options {
+    display: flex;
+    flex-direction: column; /* 让选项垂直排列 */
+}
+
+.options label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.options input[type="radio"] {
+    margin-right: 8px;
+}
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Risk Tolerance Questionnaire</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation (Board) -->
+  <div class="sidebar">
+    <h2>Question Board</h2>
+    <ul id="navList" class="nav-list"></ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="header">
+      <h1>Risk Tolerance Questionnaire</h1>
+    </div>
+    <div class="progress-bar">
+      <div class="progress" id="progressBar"></div>
+    </div>
+    <div class="content">
+      <div id="questionContainer"></div>
+      <div class="navigation">
+        <button id="prevBtn" class="btn">Previous</button>
+        <button id="nextBtn" class="btn">Next</button>
+        <button id="submitBtn" class="btn submit-button" style="display: none;">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

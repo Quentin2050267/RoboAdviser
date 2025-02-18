@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main">
+        <div class="header">
+            <h1>Your Risk Assessment Results</h1>
+        </div>
+        <div class="content">
+            <div id="resultContainer"></div>
+            <button onclick="window.location.href='index.html'" class="btn">Back to Home</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const score = localStorage.getItem("resultScore");
+            const answers = JSON.parse(localStorage.getItem("answers"));
+            document.getElementById("resultContainer").innerHTML = 
+                `<h3>Your Score: ${score}</h3>
+                 <ul>${Object.entries(answers).map(([q, ans]) => `<li>Q${q}: ${ans}</li>`).join("")}</ul>`;
+        };
+    </script>
+</body>
+</html>
