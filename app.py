@@ -45,4 +45,7 @@ def generate_report(answers):
 
 # 启动 Flask 应用
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # 默认使用 5000（本地开发时）
+    # 监听所有 IP 地址（0.0.0.0）和指定端口
+    app.run(host='0.0.0.0', port=port)
