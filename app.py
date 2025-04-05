@@ -9,7 +9,8 @@ ON_HEROKU = True
 if not ON_HEROKU:
     app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 if ON_HEROKU:
-    app = Flask(__name__, static_folder="static")
+    app = Flask(__name__, static_folder='frontend/build', static_url_path='')
+    # app = Flask(__name__, static_folder="static")
 
 if not ON_HEROKU:
     @app.route('/')
