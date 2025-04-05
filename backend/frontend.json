@@ -1,8 +1,9 @@
 {
+    "total_questions": 2,
     "answers": [
-        "D. 65 or above",
-        "C. None"
+        "A. 18-30",
+        "A. Fixed"
     ],
-    "total_questions":2,
-    "total score": 3
+    "total_score": 24,
+    "risk_aversion": 12.0
 }

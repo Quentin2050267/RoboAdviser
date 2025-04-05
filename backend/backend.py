@@ -4,18 +4,6 @@ import pandas as pd
 from scipy.optimize import minimize
 
 
-def classify_score(score, risk_aversion_list
-) -> int:
-    for i, threshold in enumerate(risk_aversion_list):
-        if score <= threshold:
-            return threshold
-
-
-def get_category_from_json(json_data, risk_aversion_list):
-    total_score = json_data.get("total_score", 0)
-    return classify_score(total_score, risk_aversion_list)
-
-
 def load_data(prices_csv: pd.DataFrame,
               details_csv: pd.DataFrame
 ):
@@ -60,6 +48,12 @@ def compute_optimal_weights(risk_aversion,
     # min var
     def portfolio_variance(weights):
         return np.dot(weights.T, np.dot(varcov, weights))
+    
+    def negative_utility(weights, risk_aversion):
+        portfolio_return = np.dot(weights, expected_returns)          # r = w^T * R
+        portfolio_variance = np.dot(weights.T, np.dot(varcov, weights))  # sigma^2 = w^T * VarCov * w
+        utility = portfolio_return - (risk_aversion / 2) * portfolio_variance  # U = r - (A/2) * sigma^2
+        return -utility  # 最小化 -U 等价于最大化 U
 
     # constraints
     constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
@@ -71,10 +65,19 @@ def compute_optimal_weights(risk_aversion,
 
     initial_guess = np.array([1.0 / num_assets] * num_assets)
 
-    result = minimize(portfolio_variance, initial_guess, bounds=bounds, constraints=constraints)
+    # result = minimize(portfolio_variance, initial_guess, bounds=bounds, constraints=constraints)
+    # 使用 minimize 优化
+    result = minimize(
+        fun=negative_utility,                # 目标函数
+        x0=initial_guess,                    # 初始值
+        args=(risk_aversion,),               # 传递风险厌恶系数
+        bounds=bounds,                       # 边界条件
+        constraints=constraints,             # 约束条件
+        method='SLSQP'                       # 非线性优化方法，与 GRG Nonlinear 类似
+    )
 
     if result.success:
-        weights_df = pd.DataFrame(result.x, index=returns.columns, columns=[f"Risk Aversion {risk_aversion}"])
+        weights_df = pd.DataFrame(result.x, index=returns.columns, columns=[f"Weight_{allow_short}"])
     else:
         raise ValueError("Optimization failed")
 
@@ -139,22 +142,27 @@ def generate_efficient_frontier_data(weights_no_short, weights_short, returns, c
 
     return json.dumps(chart_data, indent=4)
 
-# ---示例调用---
-with open("frontend.json", "r", encoding="utf-8") as file:
-    data = json.load(file)
+def main(data=None):
+    # ---示例调用---
+    if data is None:
+        with open("frontend.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
 
-risk_aversion_list = [1.5, 2.5, 3.5, 6, 12]
-category_result = get_category_from_json(data, risk_aversion_list)
-print(category_result)
+    risk_aversion = data.get("risk_aversion", 0)
+    print(risk_aversion)
 
-prices_df, code_to_name = load_data('fund_prices.csv', 'fund_detail.csv')
-returns_df = prices_df.pct_change().dropna()
+    prices_df, code_to_name = load_data('fund_prices.csv', 'fund_detail.csv')
+    returns_df = prices_df.pct_change().dropna()
 
-weights_no_short = compute_optimal_weights(risk_aversion=category_result, returns=returns_df, allow_short=False)
-weights_short = compute_optimal_weights(risk_aversion=category_result, returns=returns_df, allow_short=True)
-# print(weights_no_short, weights_short)
+    weights_no_short = compute_optimal_weights(risk_aversion=risk_aversion, returns=returns_df, allow_short=False)
+    weights_short = compute_optimal_weights(risk_aversion=risk_aversion, returns=returns_df, allow_short=True)
+    print(weights_no_short)
+    print(weights_short)
+    print(weights_no_short.sum(), weights_short.sum())
 
-chart_json = generate_efficient_frontier_data(weights_no_short, weights_short, returns_df, code_to_name)
-with open("backend.json", "w") as f:
-    f.write(chart_json)
+    chart_json = generate_efficient_frontier_data(weights_no_short, weights_short, returns_df, code_to_name)
+    with open("backend.json", "w") as f:
+        f.write(chart_json)
 
+if __name__ == "__main__":
+    main()
