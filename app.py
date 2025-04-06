@@ -2,31 +2,17 @@ from flask import Flask, request, jsonify, send_from_directory
 import os
 import json
 from backend.backend import main
+import time
 
-ON_HEROKU = True
+ON_HEROKU = False
 
 # 初始化 Flask 应用
-if not ON_HEROKU:
-    app = Flask(__name__, static_folder='frontend/build', static_url_path='')
-if ON_HEROKU:
-    app = Flask(__name__, static_folder='frontend/build', static_url_path='')
-    # app = Flask(__name__, static_folder="static")
-
-# if not ON_HEROKU:
-#     @app.route('/')
-#     def index():
-#         return app.send_static_file('index.html')
+app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
-# if ON_HEROKU:
-#     @app.route("/")
-#     def index():
-#         return send_from_directory("static", "index.html")
-#     @app.route("/<path:path>")
-#     def catch_all(path):
-#         return send_from_directory("static", "index.html")
+
 
 
 @app.route('/submit', methods=['POST'])
@@ -38,7 +24,7 @@ def submit():
     # 生成分析报告
     try:
         report = generate_report(answers, weights)
-        return jsonify({"message": "Submit successfully", "report": report})
+        return jsonify({"message": "Submit successfully", "report": report}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -72,10 +58,21 @@ def generate_report(answers, weights, filename=r"backend/frontend.json"):
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(json.dumps(report, indent=4))
 
-    main(data=report)  # 调用主函数进行计算
+    time.sleep(1)
+    # main(data=report, path="backend", filename="backend.json")  
+    
 
     return report
 
+@app.route('/api/efficient-frontier', methods=['GET'])
+def get_efficient_frontier():
+    try:
+        with open('backend/backend.json', 'r') as file:
+            data = json.load(file)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 # 启动 Flask 应用
 if __name__ == '__main__':
     if not ON_HEROKU:

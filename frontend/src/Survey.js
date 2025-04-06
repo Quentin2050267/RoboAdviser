@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { ProgressBar } from 'react-bootstrap';
+import { ProgressBar, Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { questions } from './questionnaire';
-
 
 const PageContainer = styled.div`
   display: flex;
@@ -65,6 +64,17 @@ const OptionContainer = styled.div`
   padding: 10px 20px; /* 增加左右的间隙 */
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #f0f7ff; /* 悬浮时的背景颜色 */
+  }
+
+  /* 如果你也想为已选择的选项添加样式，可以使用这个 */
+  ${props => props.selected && `
+    background-color: #e6f2ff;
+    border: 1px solid #99ccff;
+  `}
 `;
 
 const RadioButton = styled.input.attrs({ type: 'radio' })`
@@ -77,7 +87,6 @@ const NavigationButton = styled.button`
   width: 110px;
   height: 40px;
   margin: 20px;
-  // padding: 10px 10px;
   cursor: pointer;
   border: 1px solid #bbb;
   border-radius: 5px;
@@ -87,6 +96,11 @@ const NavigationButton = styled.button`
   &:hover {
     background-color: #e2e6ea;
     border-color: #aaa;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `;
 
@@ -99,10 +113,25 @@ const ButtonContainer = styled.div`
   padding: 0 20px;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+`;
+
+const LoadingText = styled.p`
+  font-size: 18px;
+  margin-top: 20px;
+  color: #33475b;
+`;
+
 function Survey() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState(Array(questions.length).fill(null));
   const [weights, setWeights] = useState(Array(questions.length).fill(1));
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleAnswer = (index) => {
@@ -137,6 +166,7 @@ function Survey() {
 
     const confirmed = window.confirm("Are you sure you want to submit your answers?");
     if (confirmed) {
+      setIsLoading(true);
       console.log('Answers:', answers);
       console.log('Weights:', weights);
 
@@ -147,18 +177,58 @@ function Survey() {
         },
         body: JSON.stringify({ answers, weights }),
       })
-        .then((response) => response.json())
+        .then((response) => {
+          // 检查 HTTP 状态码
+          if (!response.ok) {
+            // 如果状态码不是 2xx，则抛出错误
+            return response.json().then(errorData => {
+              throw new Error(errorData.error || "Server error");
+            });
+          }
+          return response.json();
+        })
         .then((data) => {
           console.log('Success:', data);
-          navigate('/report', { state: { report: data.report } });
+          setIsLoading(false);
+          navigate('/report', {
+            state: {
+              success: true,
+              report: data.report,
+              message: data.message
+            }
+          });
         })
         .catch((error) => {
           console.error('Error:', error);
+          setIsLoading(false);
+
+          navigate('/report', {
+            state: {
+              success: false,
+              error: error.message
+            }
+          });
         });
     }
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <SurveyContainer>
+          <Title>Processing</Title>
+          <LoadingContainer>
+            <Spinner animation="border" role="status" variant="primary" style={{ width: '3rem', height: '3rem' }}>
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+            <LoadingText>Processing your answers, please wait...</LoadingText>
+          </LoadingContainer>
+        </SurveyContainer>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
