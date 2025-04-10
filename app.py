@@ -58,7 +58,7 @@ def generate_report(answers, weights, filename=r"backend/frontend.json"):
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(json.dumps(report, indent=4))
 
-    main(data=report, path="backend", filename="backend.json")      
+    # main(data=report, path="backend", filename="backend.json")      
 
     return report
 

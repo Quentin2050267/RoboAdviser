@@ -20,7 +20,7 @@ const SurveyContainer = styled.div`
   border-radius: 15px;
   padding: 0;
   width: 600px;
-  height: 500px;
+  min-height: 500px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
@@ -55,6 +55,8 @@ const Options = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 30px;
+  margin-bottom: 100px; // 添加底部边距，为按钮留出空间
+
 `;
 
 const OptionContainer = styled.div`
@@ -111,6 +113,8 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
+  background-color: white;  // 确保按钮区域有背景色，防止内容过多时覆盖
+  border-radius: 0 0 15px 15px; // 保持圆角一致性
 `;
 
 const LoadingContainer = styled.div`
@@ -236,7 +240,7 @@ function Survey() {
         <Title>Survey</Title>
         <StyledProgressBar now={progress} />
         {currentQuestion < questions.length ? (
-          <div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <Question>
               {currentQuestion + 1}. {questions[currentQuestion].text}
             </Question>
