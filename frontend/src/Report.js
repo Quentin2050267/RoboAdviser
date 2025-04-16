@@ -103,27 +103,27 @@ function Report() {
 
         // 1. 先转换数据为可处理格式
         const noShortPoints = data.efficient_frontier_no_short.map(point => ({
-          risk: parseFloat((point.risk * 100).toFixed(4)),
-          return: parseFloat((point.return * 100).toFixed(4))
+          risk: parseFloat((point.risk * 100).toFixed(2)),
+          return: parseFloat((point.return * 100).toFixed(2))
         }));
 
         const shortPoints = data.efficient_frontier_short.map(point => ({
-          risk: parseFloat((point.risk * 100).toFixed(4)),
-          return: parseFloat((point.return * 100).toFixed(4))
+          risk: parseFloat((point.risk * 100).toFixed(2)),
+          return: parseFloat((point.return * 100).toFixed(2))
         }));
 
         const optimalPortNoShort = data.optimal_portfolio && data.optimal_portfolio.find(p => p.name === "No Short");
         const optimalPortShort = data.optimal_portfolio && data.optimal_portfolio.find(p => p.name === "Short");
         const formattedOptimalPortNoShort = optimalPortNoShort ? {
           name: "Optimal Portfolio (No Short)",
-          risk: parseFloat((optimalPortNoShort.risk * 100).toFixed(4)),
-          return: parseFloat((optimalPortNoShort.return * 100).toFixed(4))
+          risk: parseFloat((optimalPortNoShort.risk * 100).toFixed(2)),
+          return: parseFloat((optimalPortNoShort.return * 100).toFixed(2))
         } : null;
 
         const formattedOptimalPortShort = optimalPortShort ? {
           name: "Optimal Portfolio (Short)",
-          risk: parseFloat((optimalPortShort.risk * 100).toFixed(4)),
-          return: parseFloat((optimalPortShort.return * 100).toFixed(4))
+          risk: parseFloat((optimalPortShort.risk * 100).toFixed(2)),
+          return: parseFloat((optimalPortShort.return * 100).toFixed(2))
         } : null;
 
         console.log('No Short Points:', noShortPoints.length);
@@ -229,8 +229,8 @@ function Report() {
           .filter(fund => !(fund.risk === 0 && fund.return === 0)) // 过滤掉风险和收益都为0的基金
           .map(fund => ({
             name: fund.name,
-            risk: parseFloat((fund.risk * 100).toFixed(4)),
-            return: parseFloat((fund.return * 100).toFixed(4))
+            risk: parseFloat((fund.risk * 100).toFixed(2)),
+            return: parseFloat((fund.return * 100).toFixed(2))
           }));
 
         // 设置处理后的图表数据
@@ -302,8 +302,8 @@ function Report() {
           borderRadius: '5px'
         }}>
           {data.name && <p style={{ margin: 0 }}><strong>{data.name}</strong></p>}
-          <p style={{ margin: 0 }}>Risk: {data.risk}%</p>
-          <p style={{ margin: 0 }}>Return: {data.return}%</p>
+          <p style={{ margin: 0 }}>Risk: {data.risk.toFixed(2)}%</p>
+          <p style={{ margin: 0 }}>Return: {data.return.toFixed(2)}%</p>
         </div>
       );
     }
@@ -356,7 +356,7 @@ function Report() {
             <p style={{ fontStyle: 'italic' }}>
               Your score ranges from 1.5 to 12, with a lower score indicating a higher risk tolerance.
             </p>
-            <p>Total Score: {report.total_score}</p>
+            <p>Total Score: {report.total_score.toFixed(2)}</p>
             <p>You answered {report.total_questions} questions</p>
 
             <h3>Efficient Frontier Analysis</h3>
@@ -375,6 +375,8 @@ function Report() {
                       name="Risk"
                       label={{ value: 'Risk (%)', position: 'insideBottom', offset: -5 }}
                       domain={axisDomain.x}
+                      tickFormatter={(value) => Math.round(value)}
+
                     />
                     <YAxis
                       type="number"
@@ -382,6 +384,7 @@ function Report() {
                       name="Return"
                       label={{ value: 'Return (%)', angle: -90, position: 'insideLeft' }}
                       domain={axisDomain.y}
+                      tickFormatter={(value) => Math.round(value)}
                     />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend
@@ -503,12 +506,12 @@ function Report() {
               <li><strong>GMVP Points:</strong> These are the Global Minimum Variance Portfolios - the portfolios with the lowest possible risk.
                 {chartData.gmvpNoShort && (
                   <ul>
-                    <li>GMVP (No Short): Risk: <strong>{chartData.gmvpNoShort.risk}%</strong>, Return: <strong>{chartData.gmvpNoShort.return}%</strong></li>
+                    <li>GMVP (No Short): Risk: <strong>{chartData.gmvpNoShort.risk.toFixed(2)}%</strong>, Return: <strong>{chartData.gmvpNoShort.return.toFixed(2)}%</strong></li>
                   </ul>
                 )}
                 {chartData.gmvpShort && (
                   <ul>
-                    <li>GMVP (Short): Risk: <strong>{chartData.gmvpShort.risk}%</strong>, Return: <strong>{chartData.gmvpShort.return}%</strong></li>
+                    <li>GMVP (Short): Risk: <strong>{chartData.gmvpShort.risk.toFixed(2)}%</strong>, Return: <strong>{chartData.gmvpShort.return.toFixed(2)}%</strong></li>
                   </ul>
                 )}
               </li>
@@ -516,12 +519,12 @@ function Report() {
               <li><strong>Optimal Portfolios:</strong> These points represent your personalized optimal investment allocation based on your risk tolerance.
                 {chartData.optimalPortNoShort && (
                   <ul>
-                    <li>Optimal Portfolio (No Short): Risk: <strong>{chartData.optimalPortNoShort.risk}%</strong>, Return: <strong>{chartData.optimalPortNoShort.return}%</strong></li>
+                    <li>Optimal Portfolio (No Short): Risk: <strong>{chartData.optimalPortNoShort.risk.toFixed(2)}%</strong>, Return: <strong>{chartData.optimalPortNoShort.return.toFixed(2)}%</strong></li>
                   </ul>
                 )}
                 {chartData.optimalPortShort && (
                   <ul>
-                    <li>Optimal Portfolio (Short): Risk: <strong>{chartData.optimalPortShort.risk}%</strong>, Return: <strong>{chartData.optimalPortShort.return}%</strong></li>
+                    <li>Optimal Portfolio (Short): Risk: <strong>{chartData.optimalPortShort.risk.toFixed(2)}%</strong>, Return: <strong>{chartData.optimalPortShort.return.toFixed(2)}%</strong></li>
                   </ul>
                 )}
               </li>

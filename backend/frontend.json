@@ -2,9 +2,9 @@
     "total_questions": 3,
     "answers": [
         "A. 18-30",
-        "B. Mixed (fixed and variable sources)",
-        "E. Below $10,000"
+        "A. Fixed income (e.g., salary, pension) ",
+        "A. Above $500,000"
     ],
-    "total_score": 30.5,
-    "risk_aversion": 6.1
+    "total_score": 7.5,
+    "risk_aversion": 1.5
 }
