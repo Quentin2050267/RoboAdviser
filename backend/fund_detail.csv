@@ -1,0 +1,11 @@
+﻿code,fund_name,market,currency,sector,first_largest_industry,fund_type,equity,bond,cash,strategy
+0P00006G2D.SI,Aberdeen Singapore Equity,Singapore,SGD,General,Financial Services,equity,98.45,0,1.55,Singapore Market
+0P00006ONO.SI,FSSA Dividend Advantage Fund,Asia Pacific,SGD,General,Financial Services,equity,99.27,0,0.73,high dividend yields
+0P00000K03,Blackrock World Healthscience A2 USD,Global,USD,Healthcare,Healthcare,equity,95.27,0.1,4.63,global healthcare industry
+0P00009VQG.SI,Fidelity China Focus A SGD,China,SGD,General,Consumer Cyclical,equity,97.15,0.72,2.13,China big names
+JAGCX,Henderson Global Technology,Global,SGD,Technology,Technology,equity,96.38,0,3.62,global technology industry
+0P0001DK5T.SI,GS US Core Equity Portfolio Acc SGD,US,SGD,General,Technology,equity,99.61,0,0.39,US big names
+0P000161I1,Fidelity US High Yield A-MDIST-SGD,US,SGD,-,-,fixed-income,0.4,91.7,7.9,lower rating but higher yields (US smaller company)
+0P0001NP7X.SI,Fidelity Asia Pacific Bond ESG A-MINCOME(G)-SGD (Hedged),Asia Pacific,SGD,-,-,fixed-income,0,100.26,-0.26,ESG sustainable investing
+0P00019B21.HK,Allianz Global Opportunistic Bond CL AMG DIS H2-SGD,Global,SGD,-,-,fixed-income,0,71.47,28.53,long-term growth
+PEBCX,PIMCO Emerging Markets Bond Fund CL E ACC SGD-H,Emerging Markets,SGD,-,-,fixed-income,0,147.79,-47.79,Emerging Market
