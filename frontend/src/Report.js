@@ -82,6 +82,11 @@ function Report() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  // 添加状态来存储坐标轴范围
+  const [axisDomain, setAxisDomain] = useState({
+    x: ['auto', 'auto'],
+    y: ['auto', 'auto']
+  });
 
   // 加载图表数据
   useEffect(() => {
@@ -219,20 +224,58 @@ function Report() {
         console.log('完整有效前沿No Short:', noShortResult.frontier.length);
         console.log('完整有效前沿Short:', shortResult.frontier.length);
 
-        setChartData({
+        // 处理基金数据
+        const processedFunds = data.funds
+          .filter(fund => !(fund.risk === 0 && fund.return === 0)) // 过滤掉风险和收益都为0的基金
+          .map(fund => ({
+            name: fund.name,
+            risk: parseFloat((fund.risk * 100).toFixed(4)),
+            return: parseFloat((fund.return * 100).toFixed(4))
+          }));
+
+        // 设置处理后的图表数据
+        const processedChartData = {
           efficientFrontierNoShort: noShortResult.frontier,
           efficientFrontierShort: shortResult.frontier,
           gmvpNoShort: noShortResult.gmvp,
           gmvpShort: shortResult.gmvp,
           optimalPortNoShort: formattedOptimalPortNoShort,
           optimalPortShort: formattedOptimalPortShort,
-          funds: data.funds
-            .filter(fund => !(fund.risk === 0 && fund.return === 0)) // 过滤掉风险和收益都为0的基金
-            .map(fund => ({
-              name: fund.name,
-              risk: parseFloat((fund.risk * 100).toFixed(4)),
-              return: parseFloat((fund.return * 100).toFixed(4))
-            }))
+          funds: processedFunds
+        };
+
+        setChartData(processedChartData);
+
+        // 计算所有点的最大和最小值，以确保所有点都在图表中显示
+        const allPoints = [
+          ...processedChartData.efficientFrontierNoShort,
+          ...processedChartData.efficientFrontierShort,
+          ...processedChartData.funds
+        ];
+
+        if (processedChartData.optimalPortNoShort) allPoints.push(processedChartData.optimalPortNoShort);
+        if (processedChartData.optimalPortShort) allPoints.push(processedChartData.optimalPortShort);
+        if (processedChartData.gmvpNoShort) allPoints.push(processedChartData.gmvpNoShort);
+        if (processedChartData.gmvpShort) allPoints.push(processedChartData.gmvpShort);
+
+        // 提取所有风险和收益值
+        const riskValues = allPoints.map(p => p.risk);
+        const returnValues = allPoints.map(p => p.return);
+
+        // 找出最大最小值
+        const minRisk = Math.min(...riskValues);
+        const maxRisk = Math.max(...riskValues);
+        const minReturn = Math.min(...returnValues);
+        const maxReturn = Math.max(...returnValues);
+
+        // 增加边距
+        const riskPadding = (maxRisk - minRisk) * 0.1;
+        const returnPadding = (maxReturn - minReturn) * 0.1;
+
+        // 设置坐标轴范围
+        setAxisDomain({
+          x: [minRisk - riskPadding, maxRisk + riskPadding],
+          y: [minReturn - returnPadding, maxReturn + returnPadding]
         });
 
         setIsLoading(false);
@@ -310,6 +353,9 @@ function Report() {
         {report ? (
           <ReportContainer>
             <h3>Risk Aversion Factor: {report.risk_aversion ? report.risk_aversion.toFixed(2) : 'N/A'}</h3>
+            <p style={{ fontStyle: 'italic' }}>
+              Your score ranges from 1.5 to 12, with a lower score indicating a higher risk tolerance.
+            </p>
             <p>Total Score: {report.total_score}</p>
             <p>You answered {report.total_questions} questions</p>
 
@@ -328,12 +374,14 @@ function Report() {
                       dataKey="risk"
                       name="Risk"
                       label={{ value: 'Risk (%)', position: 'insideBottom', offset: -5 }}
+                      domain={axisDomain.x}
                     />
                     <YAxis
                       type="number"
                       dataKey="return"
                       name="Return"
                       label={{ value: 'Return (%)', angle: -90, position: 'insideLeft' }}
+                      domain={axisDomain.y}
                     />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend
@@ -350,7 +398,7 @@ function Report() {
                       data={chartData.efficientFrontierNoShort}
                       type="monotoneX"
                       dataKey="return"
-                      stroke="#8884d8"
+                      stroke="#6a4fad"  // 更深的紫色
                       strokeWidth={2}
                       dot={{ r: 0.5 }}
                       activeDot={{ r: 5 }}
@@ -364,7 +412,7 @@ function Report() {
                       data={chartData.efficientFrontierShort}
                       type="monotoneX"
                       dataKey="return"
-                      stroke="#82ca9d"
+                      stroke="#2a9d5b"  // 更深的绿色
                       strokeWidth={2}
                       dot={{ r: 0.5 }}
                       activeDot={{ r: 5 }}
@@ -388,12 +436,11 @@ function Report() {
                         x={chartData.gmvpNoShort.risk}
                         y={chartData.gmvpNoShort.return}
                         r={6}
-                        fill="#8884d8"
+                        fill="#6a4fad"  // 更深的紫色
                         stroke="white"
                         strokeWidth={1}
-
                       >
-                        <Label value="GMVP (No Short)" position="top" offset={10} fill="#8884d8" fontSize={12} />
+                        <Label value="GMVP (No Short)" position="top" offset={10} fill="#6a4fad" fontSize={12} />
                       </ReferenceDot>
                     )}
 
@@ -403,12 +450,11 @@ function Report() {
                         x={chartData.gmvpShort.risk}
                         y={chartData.gmvpShort.return}
                         r={6}
-                        fill="#82ca9d"
+                        fill="#2a9d5b"  // 更深的绿色
                         stroke="white"
                         strokeWidth={1}
-
                       >
-                        <Label value="GMVP (Short)" position="bottom" offset={10} fill="#82ca9d" fontSize={12} />
+                        <Label value="GMVP (Short)" position="bottom" offset={10} fill="#2a9d5b" fontSize={12} />
                       </ReferenceDot>
                     )}
 
@@ -418,12 +464,11 @@ function Report() {
                         x={chartData.optimalPortNoShort.risk}
                         y={chartData.optimalPortNoShort.return}
                         r={5}
-                        fill="#8884d8"
+                        fill="#6a4fad"  // 更深的紫色
                         stroke="black"
                         strokeWidth={1}
-
                       >
-                        <Label value="Optimal (No Short)" position="top" offset={10} fill="#8884d8" fontSize={12} />
+                        <Label value="Optimal (No Short)" position="top" offset={10} fill="#6a4fad" fontSize={12} />
                       </ReferenceDot>
                     )}
 
@@ -433,12 +478,11 @@ function Report() {
                         x={chartData.optimalPortShort.risk}
                         y={chartData.optimalPortShort.return}
                         r={5}
-                        fill="#82ca9d"
+                        fill="#2a9d5b"  // 更深的绿色
                         stroke="black"
                         strokeWidth={1}
-
                       >
-                        <Label value="Optimal (Short)" position="top" offset={10} fill="#82ca9d" fontSize={12} />
+                        <Label value="Optimal (Short)" position="top" offset={10} fill="#2a9d5b" fontSize={12} />
                       </ReferenceDot>
                     )}
                   </ComposedChart>

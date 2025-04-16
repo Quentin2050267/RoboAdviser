@@ -30,7 +30,8 @@ def submit():
 
 def generate_report(answers, weights, filename=r"backend/frontend.json"):
     # 定义分数映射
-    score_map = { "A": 12, "B": 6, "C": 3.5, "D": 2.5, "E": 1.5 }
+    # score_map = { "A": 12, "B": 6, "C": 3.5, "D": 2.5, "E": 1.5 }
+    score_map = { "A": 1.5, "B": 2.5, "C": 3.5, "D": 6, "E": 12 }
     
     # 计算总分
     total_score = 0
@@ -58,7 +59,7 @@ def generate_report(answers, weights, filename=r"backend/frontend.json"):
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(json.dumps(report, indent=4))
 
-    # main(data=report, path="backend", filename="backend.json")      
+    main(data=report, path="backend", filename="backend.json")      
 
     return report
 

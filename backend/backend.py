@@ -137,8 +137,8 @@ def generate_efficient_frontier_data(
     stock_risks = returns.std().values * np.sqrt(252)
 
 
-    target_min = np.min(expected_returns)-2
-    target_max = np.max(expected_returns)+2
+    target_min = np.min(expected_returns)-20
+    target_max = np.max(expected_returns)+20
     # 生成目标收益率范围
     target_returns = np.linspace(target_min, target_max, 100)
 
@@ -200,26 +200,30 @@ def main(data=None, path="./", filename="backend.json"):
         with open("frontend.json", "r", encoding="utf-8") as file:
             data = json.load(file)
 
+    
+
     risk_aversion = data.get("risk_aversion", 0)
     print(risk_aversion)
 
-    prices_df, code_to_name = load_data('fund_prices.csv', 'fund_detail.csv')
+    fund_prices_path = os.path.join(path, 'fund_prices.csv')
+    fund_details_path = os.path.join(path, 'fund_detail.csv')
+    prices_df, code_to_name = load_data(fund_prices_path, fund_details_path)
     returns_df = prices_df.pct_change().dropna()
 
     
     # -----------正式代码可以注释掉-----------
-    weights_no_short = compute_optimal_weights(returns=returns_df, allow_short=False)
-    weights_short = compute_optimal_weights(returns=returns_df, allow_short=True)
-    print(weights_no_short)
-    print(weights_short)
-    print(weights_no_short.sum(), weights_short.sum())
+    # weights_no_short = compute_optimal_weights(returns=returns_df, allow_short=False)
+    # weights_short = compute_optimal_weights(returns=returns_df, allow_short=True)
+    # print(weights_no_short)
+    # print(weights_short)
+    # print(weights_no_short.sum(), weights_short.sum())
     # -------------------------------------
 
     weights_aversion_no_short = compute_optimal_weights_aversion(risk_aversion=risk_aversion, returns=returns_df, allow_short=False)
     weights_aversion_short = compute_optimal_weights_aversion(risk_aversion=risk_aversion, returns=returns_df, allow_short=True)
-    print(weights_aversion_no_short)
-    print(weights_aversion_short)
-    print(weights_aversion_no_short.sum(), weights_aversion_short.sum())
+    # print(weights_aversion_no_short)
+    # print(weights_aversion_short)
+    # print(weights_aversion_no_short.sum(), weights_aversion_short.sum())
     
     filename = os.path.join(path, filename)
     chart_json = generate_efficient_frontier_data(

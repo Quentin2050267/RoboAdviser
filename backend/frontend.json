@@ -1,25 +1,10 @@
 {
-    "total_questions": 18,
+    "total_questions": 3,
     "answers": [
-        "E. 76 or above",
-        "E. No income",
-        "D. $10,000 - $50,000",
-        "C. Paying for a college education",
-        "E. Others",
-        "A. Beyond 20 years",
-        "E. Substantial decrease",
-        "D. Lack basic investment knowledge",
-        "C. 2-5 years",
-        "E. Very difficult to accept",
-        "E. Sell to avoid further decline",
-        "A. Above 55%",
-        "E. Capital preservation is the priority, minimal return expected",
-        "E. Focus on capital preservation with minimal risk",
-        "B. Established growth companies with moderate risk",
-        "E. Treasury bond or equivalent, minimal risk",
-        "E. Complete exit from bonds in favor of inflation-protected assets, minimal risk",
-        "E. Take the guaranteed $10,000, no risk"
+        "A. 18-30",
+        "B. Mixed (fixed and variable sources)",
+        "E. Below $10,000"
     ],
-    "total_score": 145.5,
-    "risk_aversion": 3.2333333333333334
+    "total_score": 30.5,
+    "risk_aversion": 6.1
 }
