@@ -4,7 +4,7 @@ import json
 from backend.backend import main
 import time
 
-ON_HEROKU = False
+ON_HEROKU = True
 
 # 初始化 Flask 应用
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
