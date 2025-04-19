@@ -121,5 +121,16 @@ Follow these steps to deploy the application to Heroku:
     heroku logs --tail
     ```
 
+- If no web processes running:
+    ```bash
+    heroku ps:scale web=1
+    ```
+
+- If you want to shut down the service to avoid possible charging fee:
+    ```bash
+    heroku ps:scale web=0  
+    ```
+
+- **Remember to put the URL to the overleaf report.**
 
 Your application should now be live on Heroku!
